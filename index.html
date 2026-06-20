@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access Restricted</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --paper: #F2EDE2;
+    --card: #FBF8F0;
+    --ink: #1F1B14;
+    --ink-soft: #6E6655;
+    --stamp-red: #B43B1F;
+    --rule: rgba(31,27,20,.14);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    font-family:'DM Sans', sans-serif;
+    background:
+      radial-gradient(ellipse at top left, rgba(180,59,31,.05), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:32px;
+  }
+
+  .slip{
+    position:relative;
+    width:100%;
+    max-width:460px;
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-radius:4px;
+    box-shadow: 0 30px 70px rgba(31,27,20,.10), 0 2px 0 rgba(31,27,20,.04);
+    padding:40px 36px 32px;
+    animation: rise .6s cubic-bezier(.2,.7,.3,1) both;
+  }
+
+  @keyframes rise{
+    from{ opacity:0; transform: translateY(14px) scale(.98); }
+    to{ opacity:1; transform:none; }
+  }
+
+  /* perforated edge */
+  .slip::before{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:-1px;
+    height:0;
+    border-bottom:2px dashed var(--rule);
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid var(--rule);
+    padding-bottom:14px;
+    margin-bottom:26px;
+  }
+
+  .stamp{
+    position:absolute;
+    top:28px;
+    right:30px;
+    width:92px;
+    height:92px;
+    border:3px solid var(--stamp-red);
+    border-radius:50%;
+    color:var(--stamp-red);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    transform:rotate(-14deg);
+    opacity:.92;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:11.5px;
+    line-height:1.25;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    mix-blend-mode:multiply;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border:1px solid var(--stamp-red);
+    border-radius:50%;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:900;
+    font-size:30px;
+    letter-spacing:-.01em;
+    line-height:1.08;
+    max-width:75%;
+    margin-bottom:10px;
+  }
+
+  .sub{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    line-height:1.6;
+    max-width:85%;
+    margin-bottom:26px;
+  }
+
+  .ticket{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    line-height:1.7;
+    background: repeating-linear-gradient(135deg, rgba(180,59,31,.05) 0 10px, rgba(180,59,31,.02) 10px 20px);
+    border:1px solid rgba(180,59,31,.3);
+    border-radius:6px;
+    padding:14px 16px;
+    margin-bottom:28px;
+    color:var(--stamp-red);
+  }
+  .ticket span{ color: var(--ink-soft); }
+
+  .button{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:var(--ink);
+    color:var(--paper);
+    padding:16px 20px;
+    text-decoration:none;
+    font-size:15px;
+    font-weight:500;
+    border-radius:6px;
+    border:none;
+    cursor:pointer;
+    transition: background .25s ease, transform .15s ease;
+  }
+  .button:hover{ background:var(--stamp-red); }
+  .button:active{ transform: scale(.98); }
+  .button:focus-visible{ outline: 2px solid var(--stamp-red); outline-offset:3px; }
+
+  .button svg{ width:16px; height:16px; flex-shrink:0; }
+
+  .footer{
+    margin-top:18px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+
+  @media (max-width:480px){
+    .slip{ padding:32px 24px 26px; }
+    h1{ font-size:25px; max-width:70%; }
+    .stamp{ width:78px; height:78px; font-size:10px; top:24px; right:22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .slip{ animation:none; }
+    .button{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="slip">
+    <div class="eyebrow">
+      <span>Network Notice</span>
+      <span id="clock"></span>
+    </div>
+
+    <div class="stamp">Access<br>Denied</div>
+
+    <h1>This site is off&#8209;limits right now.</h1>
+    <p class="sub">The administrator has blocked this address during study hours. Nothing else on your device is affected.</p>
+
+    <div class="ticket">
+      <span>Blocked by</span> pw &nbsp;·&nbsp; <span>Reason</span> distraction control
+    </div>
+
+    <a href="https://t.me/Project_45_Crash_Course_Class_10" class="button" id="cta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      Go to today's class instead
+    </a>
+
+    <div class="footer">You'll be redirected to the Class 10 crash-course channel on Telegram.</div>
+  </div>
+
+<script>
+  // live clock in the eyebrow, just a quiet touch of "this is happening now"
+  const clockEl = document.getElementById('clock');
+  function tick(){
+    const d = new Date();
+    clockEl.textContent = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  }
+  tick();
+  setInterval(tick, 1000 * 30);
+
+  const btn = document.getElementById('cta');
+  const originalHTML = btn.innerHTML;
+  let redirecting = false;
+
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    if (redirecting) return;
+    redirecting = true;
+
+    let n = 3;
+    const label = () => `Redirecting in ${n}…`;
+    btn.innerHTML = '';
+    const span = document.createElement('span');
+    span.textContent = label();
+    btn.appendChild(span);
+    btn.style.background = 'var(--ink-soft)';
+
+    const iv = setInterval(() => {
+      n -= 1;
+      if (n > 0) {
+        span.textContent = label();
+      } else {
+        clearInterval(iv);
+        window.location.href = btn.getAttribute('href');
+      }
+    }, 1000);
+  });
+</script>
+
+</body>
+</html>
