@@ -1,0 +1,861 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Study - Mtaiirus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #F5F2EB;
+  --bg2: #ECEAE2;
+  --ink: #1A1814;
+  --ink2: #6B6760;
+  --ink3: #B0ADA7;
+  --accent: #D4540E;
+  --accentl: #F0A87A;
+  --accentb: rgba(212,84,14,.08);
+  --green: #2D6A3F;
+  --greenl: #E4F0E8;
+  --card: #FFFDFB;
+  --border: rgba(26,24,20,.1);
+  --borderh: rgba(26,24,20,.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* HEADER */
+header {
+  background: var(--bg);
+  color: var(--ink);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+  gap: 20px;
+}
+
+.back-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--ink);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  width: auto;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  border-color: var(--borderh);
+  background: var(--bg2);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -1px;
+}
+
+.logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.batch-title-header {
+  color: var(--ink2);
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: auto;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* MAIN */
+main {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: var(--bg2);
+  padding: 4px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.tab-btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--ink2);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--ink);
+}
+
+.tab-btn.active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* TAB CONTENT */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* BATCH HERO */
+.batch-hero {
+  background: var(--card);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.batch-hero-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.batch-hero-content {
+  padding: 24px;
+}
+
+.batch-hero-content h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+
+.batch-hero-content p {
+  color: var(--ink2);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.batch-meta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.batch-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--ink2);
+  font-weight: 500;
+}
+
+.batch-meta-item .icon {
+  font-size: 16px;
+}
+
+/* DETAILS SECTION */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.detail-card {
+  background: var(--bg2);
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.detail-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  color: var(--ink2);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+
+.detail-value {
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* SECTION HEADER */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--ink);
+}
+
+.subject-count {
+  background: var(--greenl);
+  color: var(--green);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* TOPICS GRID */
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* TOPIC CARD */
+.topic-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease;
+  cursor: pointer;
+  border-left: 4px solid var(--accent);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.topic-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(26,24,20,.12);
+  border-color: var(--borderh);
+}
+
+.topic-number {
+  width: 32px;
+  height: 32px;
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.topic-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.topic-description {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.topic-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--ink2);
+  margin-bottom: 16px;
+}
+
+.topic-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.view-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.view-btn:hover {
+  background: var(--accent);
+}
+
+/* LOADING & STATES */
+.loading-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  border: 4px solid var(--border);
+  border-top: 4px solid var(--accent);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-state {
+  text-align: center;
+  padding: 40px;
+  background: var(--accentb);
+  border-radius: 16px;
+  color: var(--accent);
+  border: 1px solid rgba(212,84,14,.25);
+}
+
+.error-state button {
+  margin-top: 12px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  width: auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ink2);
+}
+
+.empty-state .icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 12px 24px;
+  border-radius: 8px;
+  z-index: 2000;
+  animation: slideIn 0.3s, slideOut 0.3s 2.7s;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100px); opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 0 12px;
+  }
+  
+  .topics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .batch-hero-image {
+    height: 180px;
+  }
+  
+  .batch-hero-content h1 {
+    font-size: 22px;
+  }
+  
+  .batch-meta {
+    gap: 8px;
+  }
+  
+  .tabs {
+    width: 100%;
+  }
+  
+  .tab-btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="index.html" class="back-btn">← Back</a>
+  <div class="logo">
+    <img src="https://i.ibb.co/G3TLgSgJ/pngtree-mv-vm-letter-vector-logo-image-332121.jpg" alt="Mtaiirus Logo" class="logo-img">
+    Mtaiirus
+  </div>
+  <div class="batch-title-header" id="batchTitleHeader"></div>
+</header>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('details')">📋 Details</button>
+    <button class="tab-btn" onclick="switchTab('content')">📚 Topics</button>
+  </div>
+
+  <div id="detailsTab" class="tab-content active">
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading batch details...</p>
+    </div>
+  </div>
+
+  <div id="contentTab" class="tab-content">
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading topics...</p>
+    </div>
+  </div>
+</main>
+
+<script>
+// Get batch ID from URL
+const urlParams = new URLSearchParams(window.location.search);
+const batchId = urlParams.get('id');
+
+console.log("Batch ID from URL:", batchId);
+
+let topics = [];
+let currentTab = 'details';
+let batchInfo = {
+  id: '',
+  title: 'Loading...',
+  description: '',
+  thumbnail: 'https://via.placeholder.com/800x300?text=Course',
+  instructor: 'Expert Instructor',
+  students: 0,
+  rating: '4.5',
+  totalTopics: 0,
+  language: 'English',
+  level: 'All Levels',
+  duration: '0 hours',
+  lastUpdated: '2024',
+  prerequisites: 'No prerequisites required',
+  certificate: 'No'
+};
+
+// Switch tabs
+function switchTab(tab) {
+  currentTab = tab;
+  
+  // Update active button
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  // Show/hide tab content
+  document.getElementById('detailsTab').classList.remove('active');
+  document.getElementById('contentTab').classList.remove('active');
+  
+  if (tab === 'details') {
+    document.getElementById('detailsTab').classList.add('active');
+    renderDetailsTab();
+  } else {
+    document.getElementById('contentTab').classList.add('active');
+    renderContentTab();
+  }
+}
+
+// Fetch batch info directly from API
+async function fetchBatchInfo() {
+  try {
+    console.log("Fetching batches from API...");
+    const response = await fetch(`https://mtaiirwapi.lovable.app/api/batches`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log("Full API Response:", data);
+    
+    // Handle different API response formats
+    let batches = [];
+    if (Array.isArray(data)) {
+      batches = data;
+    } else if (data.data && Array.isArray(data.data)) {
+      batches = data.data;
+    } else if (data.batches && Array.isArray(data.batches)) {
+      batches = data.batches;
+    }
+    
+    console.log(`Found ${batches.length} batches`);
+    
+    // Try to find the batch with flexible matching
+    const batch = batches.find(b => {
+      const bId = String(b.id || b._id || b.batch_id || '');
+      const urlId = String(batchId);
+      return bId === urlId || bId.toLowerCase() === urlId.toLowerCase();
+    });
+    
+    if (batch) {
+      console.log("✅ Found matching batch:", batch);
+      
+      batchInfo = {
+        id: String(batch.id || batch._id || ''),
+        title: batch.title || batch.course_title || batch.batch_title || batch.name || "Untitled Course",
+        description: batch.description || batch.desc || "Learn something new today!",
+        thumbnail: batch.thumbnail || batch.course_thumbnail || batch.image || 'https://via.placeholder.com/800x300?text=Course',
+        instructor: batch.instructor || batch.teacher || batch.author || "Expert Instructor",
+        students: batch.students || batch.enrolled_count || batch.total_students || 0,
+        rating: batch.rating || batch.average_rating || '4.5',
+        totalTopics: batch.total_subjects || batch.subject_count || 0,
+        language: batch.language || 'English',
+        level: batch.level || batch.difficulty || 'All Levels',
+        duration: batch.duration || batch.total_hours || batch.total_duration || '0 hours',
+        lastUpdated: batch.last_updated || batch.updated_at || '2024',
+        prerequisites: batch.prerequisites || 'No prerequisites required',
+        certificate: batch.certificate ? 'Yes' : 'No'
+      };
+      
+      document.getElementById('batchTitleHeader').textContent = batchInfo.title;
+      document.title = `${batchInfo.title} - Mtaiirus`;
+    } else {
+      console.warn("❌ No batch found with ID:", batchId);
+      if (batches.length > 0) {
+        console.log("Using first batch as fallback");
+        const firstBatch = batches[0];
+        batchInfo = {
+          id: String(firstBatch.id || firstBatch._id || ''),
+          title: firstBatch.title || firstBatch.name || "Course",
+          description: firstBatch.description || "Course details not available",
+          thumbnail: firstBatch.thumbnail || 'https://via.placeholder.com/800x300?text=Course',
+          instructor: firstBatch.instructor || "Expert Instructor",
+          students: firstBatch.students || 0,
+          rating: firstBatch.rating || '4.5',
+          totalTopics: 0,
+          language: 'English',
+          level: 'All Levels',
+          duration: '0 hours',
+          lastUpdated: '2024',
+          prerequisites: 'No prerequisites required',
+          certificate: 'No'
+        };
+        document.getElementById('batchTitleHeader').textContent = batchInfo.title;
+        document.title = `${batchInfo.title} - Mtaiirus`;
+      }
+    }
+    
+    // Render details tab after fetching
+    renderDetailsTab();
+    
+  } catch (error) {
+    console.error("❌ Error fetching batch info:", error);
+    batchInfo.title = "Error Loading Course";
+    batchInfo.description = "Failed to load course details. Please try again.";
+    renderDetailsTab();
+  }
+}
+
+// Fetch topics from subjects API (subjects are topics)
+async function fetchTopics() {
+  try {
+    console.log(`Fetching topics for courseid: ${batchId}`);
+    const response = await fetch(`https://mtaiirwapi.lovable.app/api/subjects?courseid=${batchId}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log("Topics API Response:", data);
+    
+    // Handle different API response formats
+    let rawTopics = [];
+    if (Array.isArray(data)) {
+      rawTopics = data;
+    } else if (data.data && Array.isArray(data.data)) {
+      rawTopics = data.data;
+    } else if (data.subjects && Array.isArray(data.subjects)) {
+      rawTopics = data.subjects;
+    }
+    
+    console.log(`Found ${rawTopics.length} raw topics`);
+    
+    topics = rawTopics.map((t, index) => ({
+      id: String(t.id || t._id || index),
+      name: t.name || t.title || t.subject_name || t.topic_name || "Untitled Topic",
+      description: t.description || t.desc || t.about || "Learn this exciting topic!",
+      lessons: t.lessons || t.total_lessons || t.lesson_count || 0,
+      duration: t.duration || t.total_hours || t.time || 0
+    }));
+    
+    console.log("✅ Processed topics:", topics);
+    
+    // Update batch info with actual topic count
+    if (topics.length > 0) {
+      batchInfo.totalTopics = topics.length;
+    }
+    
+    // Render content tab if it's active
+    if (currentTab === 'content') {
+      renderContentTab();
+    }
+    
+  } catch (error) {
+    console.error("❌ Topics API Error:", error);
+    if (currentTab === 'content') {
+      document.getElementById('contentTab').innerHTML = `
+        <div class="error-state">
+          <h3>⚠️ Error Loading Topics</h3>
+          <p>${error.message}</p>
+          <button onclick="fetchTopics()">🔄 Try Again</button>
+        </div>`;
+    }
+  }
+}
+
+// Render Details Tab
+function renderDetailsTab() {
+  const detailsTab = document.getElementById('detailsTab');
+  
+  const studentCount = (batchInfo.students || 0).toLocaleString();
+  const rating = batchInfo.rating || '4.5';
+  
+  detailsTab.innerHTML = `
+    <div class="batch-hero">
+      <img src="${batchInfo.thumbnail}" alt="${batchInfo.title}" class="batch-hero-image" onerror="this.src='https://via.placeholder.com/800x300?text=Course'">
+      <div class="batch-hero-content">
+        <h1>${batchInfo.title}</h1>
+        <p>${batchInfo.description}</p>
+        <div class="batch-meta">
+          <div class="batch-meta-item">
+            <span class="icon">👨‍🏫</span>
+            <span>${batchInfo.instructor}</span>
+          </div>
+          <div class="batch-meta-item">
+            <span class="icon">👥</span>
+            <span>${studentCount} students</span>
+          </div>
+          <div class="batch-meta-item">
+            <span class="icon">⭐</span>
+            <span>${rating} rating</span>
+          </div>
+          <div class="batch-meta-item">
+            <span class="icon">📚</span>
+            <span>${batchInfo.totalTopics || topics.length} topics</span>
+          </div>
+        </div>
+        
+        <div class="details-grid">
+          <div class="detail-card">
+            <div class="detail-label">🌐 Language</div>
+            <div class="detail-value">${batchInfo.language}</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">📊 Level</div>
+            <div class="detail-value">${batchInfo.level}</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">⏱️ Duration</div>
+            <div class="detail-value">${batchInfo.duration}</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">📅 Last Updated</div>
+            <div class="detail-value">${batchInfo.lastUpdated}</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">📋 Prerequisites</div>
+            <div class="detail-value">${batchInfo.prerequisites}</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">🎓 Certificate</div>
+            <div class="detail-value">${batchInfo.certificate}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Render Content Tab (Topics)
+function renderContentTab() {
+  const contentTab = document.getElementById('contentTab');
+  
+  if (topics.length === 0) {
+    contentTab.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📚</div>
+        <h3>No topics available</h3>
+        <p>This course doesn't have any topics yet.</p>
+      </div>`;
+    return;
+  }
+  
+  contentTab.innerHTML = `
+    <div class="section-header">
+      <h2>Course Topics</h2>
+      <span class="subject-count">${topics.length} Topics</span>
+    </div>
+    <div class="topics-grid">
+      ${topics.map((topic, index) => `
+        <div class="topic-card" style="animation-delay: ${index * 0.1}s" onclick="openTopic('${topic.id}')">
+          <div class="topic-number">${String(index + 1).padStart(2, '0')}</div>
+          <div class="topic-name">${topic.name}</div>
+          <div class="topic-description">${topic.description}</div>
+          <div class="topic-meta">
+            <span>📖 ${topic.lessons} lessons</span>
+            <span>⏱️ ${topic.duration}h</span>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); openTopic('${topic.id}')">
+            View Topic
+          </button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// Open topic - navigate to RWA topic page with topicid parameter
+function openTopic(topicId) {
+  console.log("Opening topic with topicid:", topicId);
+  // Navigate to rwa/topic?id=topicId (using topicid as the value)
+  window.location.href = `../rwa/topic?topicid=${topicId}`;
+}
+
+// Show toast notification
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+
+// Initialize page
+async function init() {
+  if (!batchId) {
+    document.getElementById('detailsTab').innerHTML = `
+      <div class="error-state">
+        <h3>⚠️ Invalid Batch</h3>
+        <p>No batch ID provided. Please go back and select a batch.</p>
+        <a href="index.html" style="color: white; text-decoration: none;">
+          <button>← Back to Home</button>
+        </a>
+      </div>`;
+    return;
+  }
+  
+  console.log("Initializing batch page for ID:", batchId);
+  
+  // Fetch both in parallel
+  await Promise.all([
+    fetchBatchInfo(),
+    fetchTopics()
+  ]);
+  
+  console.log("✅ Page initialization complete");
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
