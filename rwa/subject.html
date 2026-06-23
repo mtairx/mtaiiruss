@@ -561,10 +561,10 @@ function switchTab(tab) {
   }
 }
 
-// Fetch subject info
+// Fetch subject info from subjects API
 async function fetchSubjectInfo() {
   try {
-    console.log("Fetching subject info...");
+    console.log(`Fetching subject from API: https://mtaiirwapi.lovable.app/api/subjects?courseid=${batchId || subjectId}`);
     const response = await fetch(`https://mtaiirwapi.lovable.app/api/subjects?courseid=${batchId || subjectId}`);
     
     if (!response.ok) {
@@ -572,7 +572,7 @@ async function fetchSubjectInfo() {
     }
     
     const data = await response.json();
-    console.log("API Response:", data);
+    console.log("Full API Response:", data);
     
     let items = [];
     if (Array.isArray(data)) {
@@ -583,13 +583,15 @@ async function fetchSubjectInfo() {
       items = data.subjects;
     }
     
+    console.log(`Found ${items.length} subjects`);
+    
     const subject = items.find(item => {
       const itemId = String(item.id || item._id || '');
       return itemId === String(subjectId);
     });
     
     if (subject) {
-      console.log("✅ Found subject:", subject);
+      console.log("✅ Found matching subject:", subject);
       
       subjectInfo = {
         id: String(subject.id || subject._id || ''),
@@ -597,9 +599,9 @@ async function fetchSubjectInfo() {
         description: subject.description || subject.desc || subject.about || "Learn something new today!",
         thumbnail: subject.thumbnail || subject.image || 'https://via.placeholder.com/800x300?text=Subject',
         instructor: subject.instructor || subject.teacher || subject.author || "Expert Instructor",
-        students: subject.students || subject.enrolled_count || 0,
+        students: subject.students || subject.enrolled_count || subject.total_students || 0,
         rating: subject.rating || subject.average_rating || '4.5',
-        totalTopics: subject.total_lessons || subject.lesson_count || 0,
+        totalTopics: subject.total_lessons || subject.lesson_count || subject.total_topics || 0,
         language: subject.language || 'English',
         level: subject.level || subject.difficulty || 'All Levels',
         duration: subject.duration || subject.total_hours || subject.time || '0 hours',
@@ -610,19 +612,52 @@ async function fetchSubjectInfo() {
       
       document.getElementById('subjectTitleHeader').textContent = subjectInfo.title;
       document.title = `${subjectInfo.title} - Mtaiirus`;
+      
+      if (subject.topics && Array.isArray(subject.topics)) {
+        topics = subject.topics.map((t, index) => ({
+          id: String(t.id || t._id || index),
+          name: t.name || t.title || "Untitled Topic",
+          description: t.description || t.desc || "Learn this topic!",
+          lessons: t.lessons || 0,
+          duration: t.duration || '0 min'
+        }));
+      }
+    } else {
+      console.warn("❌ Subject not found with ID:", subjectId);
+      if (items.length > 0) {
+        const firstSubject = items[0];
+        subjectInfo = {
+          id: String(firstSubject.id || firstSubject._id || ''),
+          title: firstSubject.name || firstSubject.title || title || "Subject",
+          description: firstSubject.description || "Subject details not available",
+          thumbnail: firstSubject.thumbnail || 'https://via.placeholder.com/800x300?text=Subject',
+          instructor: firstSubject.instructor || "Expert Instructor",
+          students: firstSubject.students || 0,
+          rating: firstSubject.rating || '4.5',
+          totalTopics: 0,
+          language: 'English',
+          level: 'All Levels',
+          duration: '0 hours',
+          lastUpdated: '2024',
+          prerequisites: 'No prerequisites required',
+          certificate: 'No'
+        };
+        document.getElementById('subjectTitleHeader').textContent = subjectInfo.title;
+        document.title = `${subjectInfo.title} - Mtaiirus`;
+      }
     }
     
     renderDetailsTab();
     
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error("❌ Error fetching subject info:", error);
     subjectInfo.title = title || "Error Loading Subject";
-    subjectInfo.description = "Failed to load subject details.";
+    subjectInfo.description = "Failed to load subject details. Please try again.";
     renderDetailsTab();
   }
 }
 
-// Fetch topics
+// Fetch topics for this subject
 async function fetchTopics() {
   try {
     console.log(`Fetching topics for subject: ${subjectId}`);
@@ -644,13 +679,15 @@ async function fetchTopics() {
       rawTopics = data.subjects;
     }
     
-    topics = rawTopics.map((t, index) => ({
-      id: String(t.id || t._id || index),
-      name: t.name || t.title || t.subject_name || t.topic_name || "Untitled Topic",
-      description: t.description || t.desc || t.about || "Learn this exciting topic!",
-      lessons: t.lessons || t.total_lessons || t.lesson_count || 0,
-      duration: t.duration || t.total_hours || t.time || 0
-    }));
+    if (topics.length === 0) {
+      topics = rawTopics.map((t, index) => ({
+        id: String(t.id || t._id || index),
+        name: t.name || t.title || t.subject_name || t.topic_name || "Untitled Topic",
+        description: t.description || t.desc || t.about || "Learn this exciting topic!",
+        lessons: t.lessons || t.total_lessons || t.lesson_count || 0,
+        duration: t.duration || t.total_hours || t.time || 0
+      }));
+    }
     
     console.log("✅ Processed topics:", topics);
     
@@ -777,43 +814,46 @@ function renderContentTab() {
 }
 
 // Open topic with proper URL format
-function openTopic(topicId, topicTitle) {
-  console.log("Opening topic:", topicId, topicTitle);
+function openTopic(topicId, topicName) {
+  console.log("Opening topic:", topicId, topicName);
   const encodedId = encodeURIComponent(topicId);
-  const encodedTitle = encodeURIComponent(topicTitle || '');
+  const encodedTitle = encodeURIComponent(topicName || '');
   const encodedBatch = encodeURIComponent(batchId || '');
   window.location.href = `topic.html?id=${encodedId}&title=${encodedTitle}&batch=${encodedBatch}`;
 }
 
-// Show toast
+// Show toast notification
 function showToast(message) {
   const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = message;
   document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
 }
 
-// Init
+// Initialize page
 async function init() {
   if (!subjectId) {
     document.getElementById('detailsTab').innerHTML = `
       <div class="error-state">
         <h3>⚠️ Invalid Subject</h3>
-        <p>No subject ID provided.</p>
-        <a href="index.html"><button>← Back to Home</button></a>
+        <p>No subject ID provided. Please go back and select a subject.</p>
+        <a href="index.html" style="color: white; text-decoration: none;">
+          <button>← Back to Home</button>
+        </a>
       </div>`;
     return;
   }
   
-  console.log("Initializing subject page...");
+  console.log("Initializing subject page for ID:", subjectId);
   
-  await Promise.all([
-    fetchSubjectInfo(),
-    fetchTopics()
-  ]);
+  await fetchSubjectInfo();
+  await fetchTopics();
   
-  console.log("✅ Initialization complete");
+  console.log("✅ Page initialization complete");
 }
 
 document.addEventListener('DOMContentLoaded', init);
