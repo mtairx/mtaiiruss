@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -560,11 +559,11 @@ function switchTab(tab) {
   }
 }
 
-// Fetch subject info directly from API
+// Fetch subject info from subjects API
 async function fetchSubjectInfo() {
   try {
-    console.log("Fetching subjects from API...");
-    const response = await fetch(`https://mtaiirwapi.lovable.app/api/batches`);
+    console.log(`Fetching subject from API: https://mtaiirwapi.lovable.app/api/subjects?courseid=${subjectId}`);
+    const response = await fetch(`https://mtaiirwapi.lovable.app/api/subjects?courseid=${subjectId}`);
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -579,18 +578,16 @@ async function fetchSubjectInfo() {
       items = data;
     } else if (data.data && Array.isArray(data.data)) {
       items = data.data;
-    } else if (data.batches && Array.isArray(data.batches)) {
-      items = data.batches;
+    } else if (data.subjects && Array.isArray(data.subjects)) {
+      items = data.subjects;
     }
     
-    console.log(`Found ${items.length} items`);
-    console.log("Looking for subject ID:", subjectId);
+    console.log(`Found ${items.length} subjects`);
     
-    // Try to find the subject with flexible matching
+    // Find the specific subject by ID
     const subject = items.find(item => {
       const itemId = String(item.id || item._id || '');
-      const urlId = String(subjectId);
-      return itemId === urlId || itemId.toLowerCase() === urlId.toLowerCase();
+      return itemId === String(subjectId);
     });
     
     if (subject) {
@@ -598,16 +595,16 @@ async function fetchSubjectInfo() {
       
       subjectInfo = {
         id: String(subject.id || subject._id || ''),
-        title: subject.title || subject.course_title || subject.batch_title || subject.name || "Untitled Subject",
-        description: subject.description || subject.desc || "Learn something new today!",
-        thumbnail: subject.thumbnail || subject.course_thumbnail || subject.image || 'https://via.placeholder.com/800x300?text=Subject',
+        title: subject.name || subject.title || subject.subject_name || "Untitled Subject",
+        description: subject.description || subject.desc || subject.about || "Learn something new today!",
+        thumbnail: subject.thumbnail || subject.image || 'https://via.placeholder.com/800x300?text=Subject',
         instructor: subject.instructor || subject.teacher || subject.author || "Expert Instructor",
         students: subject.students || subject.enrolled_count || subject.total_students || 0,
         rating: subject.rating || subject.average_rating || '4.5',
-        totalTopics: subject.total_subjects || subject.subject_count || 0,
+        totalTopics: subject.total_lessons || subject.lesson_count || subject.total_topics || 0,
         language: subject.language || 'English',
         level: subject.level || subject.difficulty || 'All Levels',
-        duration: subject.duration || subject.total_hours || subject.total_duration || '0 hours',
+        duration: subject.duration || subject.total_hours || subject.time || '0 hours',
         lastUpdated: subject.last_updated || subject.updated_at || '2024',
         prerequisites: subject.prerequisites || 'No prerequisites required',
         certificate: subject.certificate ? 'Yes' : 'No'
@@ -615,19 +612,30 @@ async function fetchSubjectInfo() {
       
       document.getElementById('subjectTitleHeader').textContent = subjectInfo.title;
       document.title = `${subjectInfo.title} - Mtaiirus`;
+      
+      // Also set topics from the subject data if available
+      if (subject.topics && Array.isArray(subject.topics)) {
+        topics = subject.topics.map((t, index) => ({
+          id: String(t.id || t._id || index),
+          name: t.name || t.title || "Untitled Topic",
+          description: t.description || t.desc || "Learn this topic!",
+          lessons: t.lessons || 0,
+          duration: t.duration || '0 min'
+        }));
+      }
     } else {
-      console.warn("❌ No subject found with ID:", subjectId);
+      console.warn("❌ Subject not found with ID:", subjectId);
+      // Use first subject as fallback
       if (items.length > 0) {
-        console.log("Using first item as fallback");
-        const firstItem = items[0];
+        const firstSubject = items[0];
         subjectInfo = {
-          id: String(firstItem.id || firstItem._id || ''),
-          title: firstItem.title || firstItem.name || "Subject",
-          description: firstItem.description || "Subject details not available",
-          thumbnail: firstItem.thumbnail || 'https://via.placeholder.com/800x300?text=Subject',
-          instructor: firstItem.instructor || "Expert Instructor",
-          students: firstItem.students || 0,
-          rating: firstItem.rating || '4.5',
+          id: String(firstSubject.id || firstSubject._id || ''),
+          title: firstSubject.name || firstSubject.title || "Subject",
+          description: firstSubject.description || "Subject details not available",
+          thumbnail: firstSubject.thumbnail || 'https://via.placeholder.com/800x300?text=Subject',
+          instructor: firstSubject.instructor || "Expert Instructor",
+          students: firstSubject.students || 0,
+          rating: firstSubject.rating || '4.5',
           totalTopics: 0,
           language: 'English',
           level: 'All Levels',
@@ -656,7 +664,6 @@ async function fetchSubjectInfo() {
 async function fetchTopics() {
   try {
     console.log(`Fetching topics for subject: ${subjectId}`);
-    // Use the subjects API to get topics
     const response = await fetch(`https://mtaiirwapi.lovable.app/api/subjects?courseid=${subjectId}`);
     
     if (!response.ok) {
@@ -676,15 +683,16 @@ async function fetchTopics() {
       rawTopics = data.subjects;
     }
     
-    console.log(`Found ${rawTopics.length} raw topics`);
-    
-    topics = rawTopics.map((t, index) => ({
-      id: String(t.id || t._id || index),
-      name: t.name || t.title || t.subject_name || t.topic_name || "Untitled Topic",
-      description: t.description || t.desc || t.about || "Learn this exciting topic!",
-      lessons: t.lessons || t.total_lessons || t.lesson_count || 0,
-      duration: t.duration || t.total_hours || t.time || 0
-    }));
+    // If we already have topics from subject info, use those
+    if (topics.length === 0) {
+      topics = rawTopics.map((t, index) => ({
+        id: String(t.id || t._id || index),
+        name: t.name || t.title || t.subject_name || t.topic_name || "Untitled Topic",
+        description: t.description || t.desc || t.about || "Learn this exciting topic!",
+        lessons: t.lessons || t.total_lessons || t.lesson_count || 0,
+        duration: t.duration || t.total_hours || t.time || 0
+      }));
+    }
     
     console.log("✅ Processed topics:", topics);
     
@@ -815,7 +823,6 @@ function renderContentTab() {
 // Open topic - navigate to RWA topic page with topicid parameter
 function openTopic(topicId) {
   console.log("Opening topic with topicid:", topicId);
-  // Navigate to rwa/topic?topicid=topicId
   window.location.href = `../rwa/topic?topicid=${topicId}`;
 }
 
@@ -847,11 +854,9 @@ async function init() {
   
   console.log("Initializing subject page for ID:", subjectId);
   
-  // Fetch both in parallel
-  await Promise.all([
-    fetchSubjectInfo(),
-    fetchTopics()
-  ]);
+  // Fetch subject info and topics
+  await fetchSubjectInfo();
+  await fetchTopics();
   
   console.log("✅ Page initialization complete");
 }
